@@ -4,6 +4,9 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
+/**
+ * An abstract class that forms the basis for all request types.
+ */
 abstract class Request {
   protected $billingRef;
   protected $packageId;
@@ -32,6 +35,9 @@ abstract class Request {
   abstract public function getHmacParams();
 }
 
+/**
+ * A request for creating and embedded session.
+ */
 class CreateSessionRequest extends Request {
 
   private $interviewFormat;
@@ -100,8 +106,14 @@ class CreateSessionRequest extends Request {
   }
 }
 
+/**
+ * A request for resuming a previously saved embedded session.
+ */
 class ResumeSessionRequest extends Request {
 
+  /**
+   * @param string $snapshot
+   */
   public function __construct($snapshot) {
     $this->content = $snapshot;
   }
@@ -123,6 +135,9 @@ class ResumeSessionRequest extends Request {
   }
 }
 
+/**
+ * A request for uploading a package to Cloud Services.
+ */
 class UploadPackageRequest extends Request {
   
   public function __construct($packageId, $packageFilePath) {
@@ -147,6 +162,9 @@ class UploadPackageRequest extends Request {
   }
 }
 
+/**
+ * A class for sending requests to HotDocs Cloud Services.
+ */
 class Client {
 
   private $subscriberId;
@@ -154,6 +172,12 @@ class Client {
   private $address;
   private $proxy;
 
+/**
+ * @param string $subscriberId
+ * @param string $signingKey
+ * @param string $address
+ * @param string $proxy
+ */
   public function __construct(
       $subscriberId,
       $signingKey,
@@ -165,6 +189,11 @@ class Client {
     $this->proxy = $proxy;
   }
   
+  /**
+   * Sends a request to Cloud Services.
+   * @param  Request $request
+   * @return stringe
+   */
   public function sendRequest($request) {
     $ch = $this->getConn($request);
     $response = curl_exec($ch);
@@ -198,6 +227,11 @@ class Client {
     return $response;
   }
   
+  /**
+   * Configures a cURL handle for the request.
+   * @param  Request $request
+   * @return resource
+   */
   private function getConn($request) {
     $url = $this->address . $request->getPathPrefix() . '/' . rawurlencode($this->subscriberId);
     if (strlen($request->getPackageId()) > 0) {
@@ -224,6 +258,11 @@ class Client {
     return $ch;
   }
   
+  /**
+   * Adds a signature and date to a cURL handle configuration.
+   * @param resource $ch
+   * @param array    $params
+   */
   private function signAndDate($ch, $params) {
     date_default_timezone_set('GMT');
     $timestamp = time();
@@ -234,6 +273,11 @@ class Client {
         'x-hd-date: ' . date("D, d M Y H:i:s T", $timestamp)));
   }
   
+  /**
+   * Calculates an HMAC given a set of parameters.
+   * @param  array $params
+   * @return string
+   */
   private function getSignature($params) {
     // If there are any bools in $params, convert them to strings.
     // Also convert any arrays to strings of the following format:

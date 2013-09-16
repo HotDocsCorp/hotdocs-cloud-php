@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>HotDocs PHP</title>
+    <title>HotDocs Cloud Services PHP Client Demo</title>
     <script type="text/javascript" src="http://files.hotdocs.ws/download/easyXDM.min.js"></script>
     <script type="text/javascript" src="http://files.hotdocs.ws/download/hotdocs.js"></script>
   </head>
   <?php
-    include 'client.php';
+    require 'client.php';
     
     $client = new Client('SUBSCRIBER_ID', 'SIGNING_KEY');
     $request = new CreateSessionRequest('Employment Agreement', 'C:\myfilepath\EmploymentAgreement.hdpkg');
