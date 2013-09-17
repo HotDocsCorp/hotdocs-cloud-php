@@ -190,7 +190,9 @@ class Client {
   }
   
   /**
-   * Sends a request to Cloud Services.
+   * Sends a request to Cloud Services.  If the request refers to a package that
+   * is not in the Cloud Services cache, this method will automatically upload
+   * the package and retry the request.
    * @param  Request $request
    * @return stringe
    */
