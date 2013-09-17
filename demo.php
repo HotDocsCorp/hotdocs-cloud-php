@@ -6,7 +6,7 @@
     <script type="text/javascript" src="http://files.hotdocs.ws/download/hotdocs.js"></script>
   </head>
   <?php
-    require 'client.php';
+    require 'hotdocs-cloud-1.0.0.php';
     
     $client = new Client('SUBSCRIBER_ID', 'SIGNING_KEY');
     $request = new CreateSessionRequest('Employment Agreement', 'C:\myfilepath\EmploymentAgreement.hdpkg');
