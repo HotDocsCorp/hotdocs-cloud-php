@@ -36,7 +36,7 @@ abstract class Request {
 }
 
 /**
- * A request for creating and embedded session.
+ * A request for creating an embedded session.
  */
 class CreateSessionRequest extends Request {
 
