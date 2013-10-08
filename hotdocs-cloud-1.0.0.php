@@ -17,16 +17,32 @@ abstract class Request {
     return $this->billingRef;
   }
   
+  public function setBillingRef($billingRef) {
+  	$this->billingRef = $billingRef;
+  }
+  
   public function getPackageId() {
     return $this->packageId;
+  }
+  
+  public function setPackageId($packageId) {
+  	$this->packageId = $packageId;
   }
   
   public function getPackageFilePath() {
     return $this->packageFilePath;
   }
   
+  public function setPackageFilePath($packageFilePath) {
+  	$this->packageFilePath = $packageFilePath;
+  }
+  
   public function getContent() {
     return $this->content;
+  }
+  
+  public function setContent($content) {
+  	$this->content = $content;
   }
   
   abstract public function getPathPrefix();
@@ -69,10 +85,6 @@ class CreateSessionRequest extends Request {
     $this->settings[$name] = $value;
   }
   
-  public function getContent() {
-    return $this->content;
-  }
-  
   public function getPathPrefix() {
     return '/embed/newsession';
   }
@@ -111,11 +123,34 @@ class CreateSessionRequest extends Request {
  */
 class ResumeSessionRequest extends Request {
 
+  private $snapshotParsed = false;
+
   /**
    * @param string $snapshot
    */
-  public function __construct($snapshot) {
+  public function __construct(
+      $snapshot,
+      $packageFilePath = NULL,
+      $billingRef = NULL) {
     $this->content = $snapshot;
+    $this->packageFilePath = $packageFilePath;
+    $this->billingRef = $billingRef;
+  }
+  
+  // Override
+  public function getPackageId() {
+    if (!$this->snapshotParsed) {
+   	  $this->parseSnapshot();
+    }
+    return $this->packageId;
+  }
+  
+  // Override
+  public function getBillingRef() {
+  	if (!$this->snapshotParsed) {
+  	  $this->parseSnapshot();
+  	}
+  	return $this->billingRef;
   }
  
   public function getPathPrefix() {
@@ -132,6 +167,18 @@ class ResumeSessionRequest extends Request {
 
   public function getHmacParams() {
     return array($this->content);
+  }
+  
+  private function parseSnapshot() {
+    $indexOfPound = strpos($this->content, '#');
+    $base64 = substr($this->content, 0, $indexOfPound);
+    $json = base64_decode($base64);
+    $state = json_decode($json);
+    
+    $this->setPackageId($state->PackageID);
+    $this->setBillingRef($state->BillingRef);
+    
+    $snapshotParsed = true;
   }
 }
 
