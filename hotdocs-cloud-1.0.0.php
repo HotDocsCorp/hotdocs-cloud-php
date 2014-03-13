@@ -92,7 +92,7 @@ class CreateSessionRequest extends Request {
   public function getQuery() {
     $query = 'interviewformat=' . rawurlencode($this->interviewFormat)
         . '&outputformat=' . rawurlencode($this->outputFormat)
-        . '&showdownloadlinks=' . rawurlencode($this->showDownloadLinks);
+        . '&showdownloadlinks=' . ($this->showDownloadLinks ? 'true' : 'false');
         
     if ($this->billingRef != NULL) {
        $query .= '&billingref=' . rawurlencode($this->billingRef);
